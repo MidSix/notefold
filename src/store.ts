@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { getCommentSyntax } from './commentSyntax';
 import { parseNotes, ParseResult } from './parser';
 
-const IGNORED_SCHEMES = new Set(['output', 'debug', 'code-note', 'vscode-scm', 'comment']);
+const IGNORED_SCHEMES = new Set(['output', 'debug', 'notefold-note', 'vscode-scm', 'comment']);
 const EMPTY: ParseResult = { notes: [], problems: [] };
 
 interface Entry {
@@ -23,7 +23,7 @@ export class NoteStore implements vscode.Disposable {
   private readonly timers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly emitter = new vscode.EventEmitter<vscode.TextDocument>();
   readonly onDidUpdate = this.emitter.event;
-  readonly diagnostics = vscode.languages.createDiagnosticCollection('codeNotes');
+  readonly diagnostics = vscode.languages.createDiagnosticCollection('notefold');
   private readonly disposables: vscode.Disposable[] = [this.emitter, this.diagnostics];
 
   constructor() {
@@ -92,7 +92,7 @@ export class NoteStore implements vscode.Disposable {
           p.message,
           p.kind === 'duplicate-id' ? vscode.DiagnosticSeverity.Information : vscode.DiagnosticSeverity.Warning,
         );
-        d.source = 'Code Notes';
+        d.source = 'NoteFold';
         d.code = p.kind;
         return d;
       }),

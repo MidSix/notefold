@@ -33,9 +33,9 @@ const lineOf = (doc: vscode.TextDocument, needle: string): number =>
 const isVisible = (editor: vscode.TextEditor, line: number): boolean =>
   editor.visibleRanges.some((r) => r.start.line <= line && line <= r.end.line);
 
-suite('Code Notes', () => {
+suite('NoteFold', () => {
   suiteSetup(async () => {
-    await vscode.extensions.getExtension('sebastian-moreno.code-notes')!.activate();
+    await vscode.extensions.getExtension('MidSix.notefold')!.activate();
   });
 
   teardown(async () => {
@@ -66,7 +66,7 @@ suite('Code Notes', () => {
     test(`add note uses the ${lang} comment syntax`, async () => {
       const editor = await open(lang, 'first\nsecond\nthird');
       place(editor, 1);
-      await vscode.commands.executeCommand('codeNotes.add');
+      await vscode.commands.executeCommand('notefold.add');
       const lines = editor.document.getText().split('\n');
       assert.strictEqual(lines[0], 'first');
       assert.ok(lines[1].startsWith(`${start} id=`), lines[1]);
@@ -82,7 +82,7 @@ suite('Code Notes', () => {
     const original = 'def f():\n    a = 1\n    b = 2\n    return a + b\n';
     const editor = await open('python', original);
     place(editor, 1, 2, 3, 0); // ends at column 0 of line 3 -> lines 1..2
-    await vscode.commands.executeCommand('codeNotes.add');
+    await vscode.commands.executeCommand('notefold.add');
     await editor.edit((b) => b.insert(editor.selection.active, 'hola'), { undoStopBefore: false, undoStopAfter: false });
     const lines = editor.document.getText().split('\n');
     assert.match(lines[1], /^ {4}# @note-start id=[a-z0-9]{6}$/);
@@ -99,7 +99,7 @@ suite('Code Notes', () => {
     const editor = await open('javascript', 'let a = 1;\r\nlet b = 2;\r\n');
     assert.strictEqual(editor.document.eol, vscode.EndOfLine.CRLF);
     place(editor, 0);
-    await vscode.commands.executeCommand('codeNotes.add');
+    await vscode.commands.executeCommand('notefold.add');
     const text = editor.document.getText();
     assert.strictEqual(text.split('\r\n').length, 7);
     assert.ok(!/[^\r]\n/.test(text), 'no bare LF');
@@ -107,14 +107,14 @@ suite('Code Notes', () => {
 
   test('add note refuses languages without comments and overlapping notes', async () => {
     const plain = await open('plaintext', 'hello');
-    await vscode.commands.executeCommand('codeNotes.add');
+    await vscode.commands.executeCommand('notefold.add');
     assert.strictEqual(plain.document.getText(), 'hello');
     await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
 
     const text = '# @note-start id=aaaaaa\n# x\n# @note-body-end\na = 1\n# @note-end\nb = 2\n';
     const editor = await open('python', text);
     place(editor, 3, 0, 5, 1);
-    await vscode.commands.executeCommand('codeNotes.add');
+    await vscode.commands.executeCommand('notefold.add');
     assert.strictEqual(editor.document.getText(), text);
   });
 
@@ -122,7 +122,7 @@ suite('Code Notes', () => {
     const text = 'x = 0\n# @note-start id=aaaaaa\n# body\n# @note-body-end\na = 1\nb = 2\n# @note-end\ny = 3';
     const editor = await open('python', text);
     place(editor, 4);
-    await vscode.commands.executeCommand('codeNotes.delete');
+    await vscode.commands.executeCommand('notefold.delete');
     assert.strictEqual(editor.document.getText(), 'x = 0\na = 1\nb = 2\ny = 3');
     await vscode.commands.executeCommand('undo');
     assert.strictEqual(editor.document.getText(), text);
@@ -131,7 +131,7 @@ suite('Code Notes', () => {
   test('delete note at the end of the file', async () => {
     const editor = await open('python', '# @note-start\n# body\n# @note-body-end\na = 1\n# @note-end');
     place(editor, 3);
-    await vscode.commands.executeCommand('codeNotes.delete');
+    await vscode.commands.executeCommand('notefold.delete');
     assert.strictEqual(editor.document.getText(), 'a = 1');
   });
 
@@ -144,8 +144,8 @@ suite('Code Notes', () => {
     const editor = await openExample('demo.py');
     const text = await hoverText(editor.document, lineOf(editor.document, 'id=k3x9qa'), 8);
     assert.ok(text.includes('**media ponderada**'), text);
-    assert.ok(text.includes('command:codeNotes.edit'), text);
-    assert.ok(text.includes('command:codeNotes.delete'), text);
+    assert.ok(text.includes('command:notefold.edit'), text);
+    assert.ok(text.includes('command:notefold.delete'), text);
   });
 
   test('annotated code lines have no note hover', async () => {
@@ -187,7 +187,7 @@ suite('Code Notes', () => {
     const start = lineOf(editor.document, 'id=c9v1re');
     await waitFor(() => !isVisible(editor, start + 1), 'folded');
     place(editor, start + 10);
-    await vscode.commands.executeCommand('codeNotes.edit');
+    await vscode.commands.executeCommand('notefold.edit');
     assert.strictEqual(editor.selection.active.line, start + 1);
     await waitFor(() => isVisible(editor, start + 1), 'unfolded for editing');
   });
@@ -196,7 +196,7 @@ suite('Code Notes', () => {
     const editor = await openExample('demo.py');
     const body = lineOf(editor.document, 'id=k3x9qa') + 1;
     await waitFor(() => !isVisible(editor, body), 'folded');
-    const cfg = vscode.workspace.getConfiguration('codeNotes');
+    const cfg = vscode.workspace.getConfiguration('notefold');
     try {
       await cfg.update('displayMode', 'dim', vscode.ConfigurationTarget.Global);
       await waitFor(() => isVisible(editor, body), 'dim mode shows the body');
@@ -239,22 +239,22 @@ suite('Code Notes', () => {
     const first = lineOf(editor.document, 'std::vector<long long> build_prefix');
     const second = lineOf(editor.document, 'std::printf');
     place(editor, 0);
-    await vscode.commands.executeCommand('codeNotes.next');
+    await vscode.commands.executeCommand('notefold.next');
     assert.strictEqual(editor.selection.active.line, first);
-    await vscode.commands.executeCommand('codeNotes.next');
+    await vscode.commands.executeCommand('notefold.next');
     assert.strictEqual(editor.selection.active.line, second);
-    await vscode.commands.executeCommand('codeNotes.next');
+    await vscode.commands.executeCommand('notefold.next');
     assert.strictEqual(editor.selection.active.line, first, 'wraps');
-    await vscode.commands.executeCommand('codeNotes.previous');
+    await vscode.commands.executeCommand('notefold.previous');
     assert.strictEqual(editor.selection.active.line, second, 'wraps backwards');
   });
 
   test('open note shows it in a side preview document', async () => {
     const editor = await openExample('demo.cpp');
     place(editor, lineOf(editor.document, 'std::printf'));
-    await vscode.commands.executeCommand('codeNotes.open');
+    await vscode.commands.executeCommand('notefold.open');
     await waitFor(
-      () => vscode.workspace.textDocuments.some((d) => d.uri.scheme === 'code-note' && d.getText().includes('Indentación distinta')),
+      () => vscode.workspace.textDocuments.some((d) => d.uri.scheme === 'notefold-note' && d.getText().includes('Indentación distinta')),
       'virtual note document',
     );
   });
@@ -263,10 +263,10 @@ suite('Code Notes', () => {
     const editor = await openExample('demo.jl');
     assert.strictEqual(editor.document.languageId, 'julia');
     place(editor, lineOf(editor.document, 'y .= a .* x .+ b'));
-    await vscode.commands.executeCommand('codeNotes.open');
+    await vscode.commands.executeCommand('notefold.open');
     let text = '';
     await waitFor(() => {
-      text = vscode.workspace.textDocuments.find((d) => d.uri.scheme === 'code-note' && d.getText().includes('Broadcast'))?.getText() ?? '';
+      text = vscode.workspace.textDocuments.find((d) => d.uri.scheme === 'notefold-note' && d.getText().includes('Broadcast'))?.getText() ?? '';
       return !!text;
     }, 'virtual note document');
     assert.ok(text.includes('$$\ny_i = a \\, x_i + b \\qquad \\forall\\, i \\in 1,\\dots,n\n$$'), text);
@@ -297,10 +297,10 @@ suite('Code Notes', () => {
     const editor = await open('python', 'def f():\n    a = 1\n    b = 2\n    c = 3\n    return a\n');
     // Selection made bottom-up (line 3 -> 1): the thread range is normalised by VS Code.
     const thread = fakeThread(editor.document.uri, new vscode.Range(1, 0, 3, 9));
-    await vscode.commands.executeCommand('codeNotes.gutter.color.green', thread);
+    await vscode.commands.executeCommand('notefold.gutter.color.green', thread);
     assert.strictEqual(thread.label, 'Color: Verde');
-    assert.strictEqual(thread.contextValue, 'codeNotes.color.green', 'drives which dot is framed');
-    await vscode.commands.executeCommand('codeNotes.gutter.create', { thread, text: 'Suma **todo**\n\n- paso 1' });
+    assert.strictEqual(thread.contextValue, 'notefold.color.green', 'drives which dot is framed');
+    await vscode.commands.executeCommand('notefold.gutter.create', { thread, text: 'Suma **todo**\n\n- paso 1' });
     const lines = editor.document.getText().split('\n');
     assert.match(lines[1], /^ {4}# @note-start id=[a-z0-9]{6} color=green$/);
     assert.deepStrictEqual(lines.slice(2, 9), [
@@ -320,12 +320,12 @@ suite('Code Notes', () => {
 
   test('gutter: uses each language syntax (C++ and CSS)', async () => {
     const cpp = await open('cpp', 'int a = 1;\n');
-    await vscode.commands.executeCommand('codeNotes.gutter.create', { thread: fakeThread(cpp.document.uri, new vscode.Range(0, 0, 0, 0)), text: 'hola' });
+    await vscode.commands.executeCommand('notefold.gutter.create', { thread: fakeThread(cpp.document.uri, new vscode.Range(0, 0, 0, 0)), text: 'hola' });
     assert.match(cpp.document.getText(), /^\/\/ @note-start id=\w+\n\/\/ hola\n\/\/ @note-body-end\nint a = 1;\n\/\/ @note-end\n$/);
     await vscode.commands.executeCommand('workbench.action.revertAndCloseActiveEditor');
 
     const css = await open('css', 'a { color: red; }\n');
-    await vscode.commands.executeCommand('codeNotes.gutter.create', { thread: fakeThread(css.document.uri, new vscode.Range(0, 0, 0, 0)), text: 'rojo' });
+    await vscode.commands.executeCommand('notefold.gutter.create', { thread: fakeThread(css.document.uri, new vscode.Range(0, 0, 0, 0)), text: 'rojo' });
     assert.match(css.document.getText(), /^\/\* @note-start id=\w+\nrojo\n@note-body-end \*\/\na \{ color: red; \}\n\/\* @note-end \*\/\n$/);
   });
 
@@ -334,11 +334,11 @@ suite('Code Notes', () => {
     const editor = await open('python', text);
     for (const range of [new vscode.Range(0, 0, 2, 0 + 5), new vscode.Range(6, 0, 6, 0)]) {
       const thread = fakeThread(editor.document.uri, range);
-      await vscode.commands.executeCommand('codeNotes.gutter.create', { thread, text: 'nota' });
+      await vscode.commands.executeCommand('notefold.gutter.create', { thread, text: 'nota' });
       assert.strictEqual(editor.document.getText(), text);
       assert.ok(!thread.disposed, 'thread stays open so the user can fix or cancel');
     }
-    await vscode.commands.executeCommand('codeNotes.gutter.create', { thread: fakeThread(editor.document.uri, new vscode.Range(0, 0, 0, 0)), text: '  ' });
+    await vscode.commands.executeCommand('notefold.gutter.create', { thread: fakeThread(editor.document.uri, new vscode.Range(0, 0, 0, 0)), text: '  ' });
     assert.strictEqual(editor.document.getText(), text);
   });
 });

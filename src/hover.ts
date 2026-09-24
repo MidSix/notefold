@@ -4,7 +4,7 @@ import { showNoteOnLineNumberClick } from './config';
 import { codeStart, Note, noteAtLine, wholeLineSelection } from './parser';
 import { NoteStore } from './store';
 
-const ACTIONS = ['codeNotes.open', 'codeNotes.edit', 'codeNotes.delete'];
+const ACTIONS = ['notefold.open', 'notefold.edit', 'notefold.delete'];
 
 const commandLink = (label: string, command: string, ref: NoteRef): string =>
   `[${label}](command:${command}?${encodeURIComponent(JSON.stringify([ref]))})`;
@@ -23,7 +23,11 @@ export class NoteHoverProvider implements vscode.HoverProvider, vscode.Disposabl
   private forced?: { uri: string; line: number; until: number };
   private readonly disposables: vscode.Disposable[];
 
-  constructor(private readonly store: NoteStore) {
+  constructor(
+    private readonly store: NoteStore,
+    /** Told where the mouse rests, so hidden markers can be revealed. */
+    private readonly onMouseAt: (doc: vscode.TextDocument, line: number) => void = () => {},
+  ) {
     this.disposables = [
       vscode.languages.registerHoverProvider({ pattern: '**' }, this),
       vscode.window.onDidChangeTextEditorSelection((e) => void this.onSelection(e)),
@@ -44,6 +48,7 @@ export class NoteHoverProvider implements vscode.HoverProvider, vscode.Disposabl
   }
 
   async provideHover(doc: vscode.TextDocument, pos: vscode.Position): Promise<vscode.Hover | undefined> {
+    this.onMouseAt(doc, pos.line);
     const { notes } = await this.store.get(doc);
     const forced = this.forced;
     this.forced = undefined;
@@ -66,8 +71,8 @@ export class NoteHoverProvider implements vscode.HoverProvider, vscode.Disposabl
     // Action links live in a separate string that may only run our own commands.
     const ref: NoteRef = { uri: doc.uri.toString(), line: note.startLine };
     const actions = new vscode.MarkdownString(
-      `$(comment) ${commandLink('Abrir', 'codeNotes.open', ref)} · ` +
-        `${commandLink('Editar', 'codeNotes.edit', ref)} · ${commandLink('Borrar', 'codeNotes.delete', ref)}`,
+      `$(comment) ${commandLink('Abrir', 'notefold.open', ref)} · ` +
+        `${commandLink('Editar', 'notefold.edit', ref)} · ${commandLink('Borrar', 'notefold.delete', ref)}`,
       true,
     );
     actions.isTrusted = { enabledCommands: ACTIONS };

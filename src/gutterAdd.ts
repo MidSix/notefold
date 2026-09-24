@@ -17,7 +17,7 @@ import { isSupported, NoteStore } from './store';
 //   language's comment syntax, then discards the temporary comment thread.
 
 export class GutterNotes implements vscode.Disposable {
-  private readonly controller = vscode.comments.createCommentController('codeNotes', 'Code Notes');
+  private readonly controller = vscode.comments.createCommentController('notefold', 'NoteFold');
   private readonly colors = new WeakMap<vscode.CommentThread, NoteColor>();
   private readonly disposables: vscode.Disposable[] = [this.controller];
 
@@ -28,21 +28,21 @@ export class GutterNotes implements vscode.Disposable {
     };
     this.applyProvider();
     this.disposables.push(
-      vscode.commands.registerCommand('codeNotes.gutter.create', (reply: vscode.CommentReply) => this.create(reply)),
-      vscode.commands.registerCommand('codeNotes.gutter.cancel', (arg: vscode.CommentReply | vscode.CommentThread) =>
+      vscode.commands.registerCommand('notefold.gutter.create', (reply: vscode.CommentReply) => this.create(reply)),
+      vscode.commands.registerCommand('notefold.gutter.cancel', (arg: vscode.CommentReply | vscode.CommentThread) =>
         ('thread' in arg ? arg.thread : arg).dispose(),
       ),
       // Each colour has two buttons: a plain dot and a framed one for the
       // selected colour. `thread.contextValue` decides which one is shown.
       ...NOTE_COLORS.flatMap((color) =>
-        [`codeNotes.gutter.color.${color}`, `codeNotes.gutter.selected.${color}`].map((id) =>
+        [`notefold.gutter.color.${color}`, `notefold.gutter.selected.${color}`].map((id) =>
           vscode.commands.registerCommand(id, (arg: vscode.CommentReply | vscode.CommentThread) =>
             this.setColor('thread' in arg ? arg.thread : arg, color),
           ),
         ),
       ),
       vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('codeNotes.gutterAddButton')) this.applyProvider();
+        if (e.affectsConfiguration('notefold.gutterAddButton')) this.applyProvider();
       }),
     );
   }
@@ -66,13 +66,13 @@ export class GutterNotes implements vscode.Disposable {
 
   private setColor(thread: vscode.CommentThread, color: NoteColor): void {
     this.colors.set(thread, color);
-    thread.contextValue = `codeNotes.color.${color}`;
+    thread.contextValue = `notefold.color.${color}`;
     thread.label = `Color: ${PALETTE[color].label}`;
   }
 
   private async create({ thread, text }: vscode.CommentReply): Promise<void> {
     if (!text.trim()) {
-      void vscode.window.showInformationMessage('Code Notes: escribe el texto de la nota antes de crearla.');
+      void vscode.window.showInformationMessage('NoteFold: escribe el texto de la nota antes de crearla.');
       return;
     }
     const doc = await vscode.workspace.openTextDocument(thread.uri);
@@ -91,7 +91,7 @@ export class GutterNotes implements vscode.Disposable {
       const { notes } = await this.store.get(doc);
       if (!canAnnotate(commentingRanges(doc.getText(), syntax, notes), first, last)) {
         void vscode.window.showWarningMessage(
-          'Code Notes: las líneas elegidas incluyen comentarios o forman parte de otra nota; no se pueden anidar notas.',
+          'NoteFold: las líneas elegidas incluyen comentarios o forman parte de otra nota; no se pueden anidar notas.',
         );
         return;
       }

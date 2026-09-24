@@ -446,3 +446,36 @@ export function noteTitle(body: string, maxLength = Infinity): string {
   const title = line.replace(/^\s*(#{1,6}\s+|[-*+]\s+|>\s*)/, '').replace(/\\$/, '').trim() || '(nota vacía)';
   return title.length > maxLength ? `${title.slice(0, maxLength - 1).trimEnd()}…` : title;
 }
+
+export type MarkerLook = 'hidden' | 'dim' | 'faint';
+
+/**
+ * How each marker line (`@note-start`, `@note-body-end`, `@note-end`) should be
+ * drawn. `hidden` = invisible text; `faint` = strongly dimmed (dim mode, note
+ * not being edited); `dim` = lightly dimmed. Markers stay visible while the
+ * note is being edited (cursor in its header/body) or when the cursor sits on
+ * the marker itself, so it can always be edited.
+ */
+export function markerLooks(
+  notes: readonly Note[],
+  cursorLines: readonly number[],
+  mode: 'fold' | 'dim' | 'off',
+  hide: boolean,
+): Map<number, MarkerLook> {
+  const looks = new Map<number, MarkerLook>();
+  if (mode === 'off') return looks;
+  for (const n of notes) {
+    const editing = cursorLines.some((l) => l >= n.startLine && l <= n.bodyEndLine);
+    for (const line of [n.startLine, n.bodyEndLine, n.endLine]) {
+      if (hide && !editing && !cursorLines.includes(line)) looks.set(line, 'hidden');
+      else if (mode === 'dim' && !editing) looks.set(line, 'faint');
+      else looks.set(line, 'dim');
+    }
+  }
+  return looks;
+}
+
+/** The note whose marker line (`@note-start`, `@note-body-end` or `@note-end`) is `line`. */
+export function noteWithMarkerAt(notes: readonly Note[], line: number): Note | undefined {
+  return notes.find((n) => line === n.startLine || line === n.bodyEndLine || line === n.endLine);
+}

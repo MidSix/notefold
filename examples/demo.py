@@ -1,4 +1,4 @@
-"""Demo de Code Notes: pasa el ratón por el código marcado en azul."""
+"""Demo de NoteFold: pasa el ratón por el código marcado en azul."""
 
 
 def weighted_mean(xs, ws):

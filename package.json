@@ -1,21 +1,44 @@
 {
-  "name": "code-notes",
-  "displayName": "Code Notes",
-  "description": "Notas Markdown ancladas a líneas o rangos de código, guardadas como comentarios en el propio archivo.",
+  "name": "notefold",
+  "displayName": "NoteFold — Inline Code Notes with LaTeX & Mermaid",
+  "description": "Markdown notes anchored to lines of code, stored in the file itself as regular comments. Folded out of the way, with colour bars, inline titles, and LaTeX & Mermaid rendering.",
   "version": "0.1.0",
-  "publisher": "sebastian-moreno",
+  "publisher": "MidSix",
+  "author": {
+    "name": "Sebastián David Moreno Expósito",
+    "url": "https://github.com/MidSix"
+  },
   "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MidSix/notefold.git"
+  },
+  "homepage": "https://github.com/MidSix/notefold#readme",
+  "bugs": {
+    "url": "https://github.com/MidSix/notefold/issues"
+  },
+  "galleryBanner": {
+    "color": "#1e1e2e",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
+    "Visualization",
     "Other"
   ],
   "keywords": [
     "notes",
     "annotations",
     "comments",
-    "codetour"
+    "documentation",
+    "latex",
+    "mermaid",
+    "markdown",
+    "codetour",
+    "claude"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -24,148 +47,148 @@
   "contributes": {
     "commands": [
       {
-        "command": "codeNotes.add",
+        "command": "notefold.add",
         "title": "Añadir nota a la selección",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": "$(comment)"
       },
       {
-        "command": "codeNotes.open",
+        "command": "notefold.open",
         "title": "Abrir nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.edit",
+        "command": "notefold.edit",
         "title": "Editar nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.delete",
+        "command": "notefold.delete",
         "title": "Borrar nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.deleteAll",
+        "command": "notefold.deleteAll",
         "title": "Borrar todas las notas del archivo",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.next",
+        "command": "notefold.next",
         "title": "Siguiente nota",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": "$(arrow-down)"
       },
       {
-        "command": "codeNotes.previous",
+        "command": "notefold.previous",
         "title": "Nota anterior",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": "$(arrow-up)"
       },
       {
-        "command": "codeNotes.reveal",
+        "command": "notefold.reveal",
         "title": "Ir a la nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.regenerateId",
+        "command": "notefold.regenerateId",
         "title": "Regenerar id de la nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.gutter.create",
+        "command": "notefold.gutter.create",
         "title": "Crear nota",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.gutter.cancel",
+        "command": "notefold.gutter.cancel",
         "title": "Cancelar",
-        "category": "Code Notes"
+        "category": "NoteFold"
       },
       {
-        "command": "codeNotes.gutter.color.blue",
+        "command": "notefold.gutter.color.blue",
         "title": "Color: Azul",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-blue-light.svg",
           "dark": "media/color-blue-dark.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.color.green",
+        "command": "notefold.gutter.color.green",
         "title": "Color: Verde",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-green-light.svg",
           "dark": "media/color-green-dark.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.color.yellow",
+        "command": "notefold.gutter.color.yellow",
         "title": "Color: Amarillo",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-yellow-light.svg",
           "dark": "media/color-yellow-dark.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.color.red",
+        "command": "notefold.gutter.color.red",
         "title": "Color: Rojo",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-red-light.svg",
           "dark": "media/color-red-dark.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.color.purple",
+        "command": "notefold.gutter.color.purple",
         "title": "Color: Morado",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-purple-light.svg",
           "dark": "media/color-purple-dark.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.selected.blue",
+        "command": "notefold.gutter.selected.blue",
         "title": "Color: Azul (elegido)",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-blue-light-selected.svg",
           "dark": "media/color-blue-dark-selected.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.selected.green",
+        "command": "notefold.gutter.selected.green",
         "title": "Color: Verde (elegido)",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-green-light-selected.svg",
           "dark": "media/color-green-dark-selected.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.selected.yellow",
+        "command": "notefold.gutter.selected.yellow",
         "title": "Color: Amarillo (elegido)",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-yellow-light-selected.svg",
           "dark": "media/color-yellow-dark-selected.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.selected.red",
+        "command": "notefold.gutter.selected.red",
         "title": "Color: Rojo (elegido)",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-red-light-selected.svg",
           "dark": "media/color-red-dark-selected.svg"
         }
       },
       {
-        "command": "codeNotes.gutter.selected.purple",
+        "command": "notefold.gutter.selected.purple",
         "title": "Color: Morado (elegido)",
-        "category": "Code Notes",
+        "category": "NoteFold",
         "icon": {
           "light": "media/color-purple-light-selected.svg",
           "dark": "media/color-purple-dark-selected.svg"
@@ -175,167 +198,167 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "codeNotes.reveal",
+          "command": "notefold.reveal",
           "when": "false"
         },
         {
-          "command": "codeNotes.regenerateId",
+          "command": "notefold.regenerateId",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.create",
+          "command": "notefold.gutter.create",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.cancel",
+          "command": "notefold.gutter.cancel",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.color.blue",
+          "command": "notefold.gutter.color.blue",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.color.green",
+          "command": "notefold.gutter.color.green",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.color.yellow",
+          "command": "notefold.gutter.color.yellow",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.color.red",
+          "command": "notefold.gutter.color.red",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.color.purple",
+          "command": "notefold.gutter.color.purple",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.selected.blue",
+          "command": "notefold.gutter.selected.blue",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.selected.green",
+          "command": "notefold.gutter.selected.green",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.selected.yellow",
+          "command": "notefold.gutter.selected.yellow",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.selected.red",
+          "command": "notefold.gutter.selected.red",
           "when": "false"
         },
         {
-          "command": "codeNotes.gutter.selected.purple",
+          "command": "notefold.gutter.selected.purple",
           "when": "false"
         }
       ],
       "editor/context": [
         {
-          "command": "codeNotes.add",
-          "group": "codeNotes@1",
+          "command": "notefold.add",
+          "group": "notefold@1",
           "when": "editorTextFocus"
         }
       ],
       "view/title": [
         {
-          "command": "codeNotes.previous",
-          "when": "view == codeNotes.fileNotes",
+          "command": "notefold.previous",
+          "when": "view == notefold.fileNotes",
           "group": "navigation@1"
         },
         {
-          "command": "codeNotes.next",
-          "when": "view == codeNotes.fileNotes",
+          "command": "notefold.next",
+          "when": "view == notefold.fileNotes",
           "group": "navigation@2"
         }
       ],
       "comments/commentThread/context": [
         {
-          "command": "codeNotes.gutter.cancel",
+          "command": "notefold.gutter.create",
           "group": "inline@1",
-          "when": "commentController == codeNotes"
+          "when": "commentController == notefold"
         },
         {
-          "command": "codeNotes.gutter.create",
+          "command": "notefold.gutter.cancel",
           "group": "inline@2",
-          "when": "commentController == codeNotes"
+          "when": "commentController == notefold"
         }
       ],
       "comments/commentThread/title": [
         {
-          "command": "codeNotes.gutter.color.blue",
+          "command": "notefold.gutter.color.blue",
           "group": "inline@1",
-          "when": "commentController == codeNotes && commentThread && commentThread != codeNotes.color.blue"
+          "when": "commentController == notefold && commentThread && commentThread != notefold.color.blue"
         },
         {
-          "command": "codeNotes.gutter.selected.blue",
+          "command": "notefold.gutter.selected.blue",
           "group": "inline@1",
-          "when": "commentController == codeNotes && (commentThread == codeNotes.color.blue || !commentThread)"
+          "when": "commentController == notefold && (commentThread == notefold.color.blue || !commentThread)"
         },
         {
-          "command": "codeNotes.gutter.color.green",
+          "command": "notefold.gutter.color.green",
           "group": "inline@2",
-          "when": "commentController == codeNotes && commentThread != codeNotes.color.green"
+          "when": "commentController == notefold && commentThread != notefold.color.green"
         },
         {
-          "command": "codeNotes.gutter.selected.green",
+          "command": "notefold.gutter.selected.green",
           "group": "inline@2",
-          "when": "commentController == codeNotes && commentThread == codeNotes.color.green"
+          "when": "commentController == notefold && commentThread == notefold.color.green"
         },
         {
-          "command": "codeNotes.gutter.color.yellow",
+          "command": "notefold.gutter.color.yellow",
           "group": "inline@3",
-          "when": "commentController == codeNotes && commentThread != codeNotes.color.yellow"
+          "when": "commentController == notefold && commentThread != notefold.color.yellow"
         },
         {
-          "command": "codeNotes.gutter.selected.yellow",
+          "command": "notefold.gutter.selected.yellow",
           "group": "inline@3",
-          "when": "commentController == codeNotes && commentThread == codeNotes.color.yellow"
+          "when": "commentController == notefold && commentThread == notefold.color.yellow"
         },
         {
-          "command": "codeNotes.gutter.color.red",
+          "command": "notefold.gutter.color.red",
           "group": "inline@4",
-          "when": "commentController == codeNotes && commentThread != codeNotes.color.red"
+          "when": "commentController == notefold && commentThread != notefold.color.red"
         },
         {
-          "command": "codeNotes.gutter.selected.red",
+          "command": "notefold.gutter.selected.red",
           "group": "inline@4",
-          "when": "commentController == codeNotes && commentThread == codeNotes.color.red"
+          "when": "commentController == notefold && commentThread == notefold.color.red"
         },
         {
-          "command": "codeNotes.gutter.color.purple",
+          "command": "notefold.gutter.color.purple",
           "group": "inline@5",
-          "when": "commentController == codeNotes && commentThread != codeNotes.color.purple"
+          "when": "commentController == notefold && commentThread != notefold.color.purple"
         },
         {
-          "command": "codeNotes.gutter.selected.purple",
+          "command": "notefold.gutter.selected.purple",
           "group": "inline@5",
-          "when": "commentController == codeNotes && commentThread == codeNotes.color.purple"
+          "when": "commentController == notefold && commentThread == notefold.color.purple"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "codeNotes.add",
+        "command": "notefold.add",
         "key": "ctrl+alt+n",
         "mac": "cmd+alt+n",
         "when": "editorTextFocus && !editorReadonly"
       },
       {
-        "command": "codeNotes.open",
+        "command": "notefold.open",
         "key": "ctrl+alt+o",
         "mac": "cmd+alt+o",
         "when": "editorTextFocus"
       },
       {
-        "command": "codeNotes.next",
+        "command": "notefold.next",
         "key": "ctrl+alt+down",
         "mac": "cmd+alt+down",
         "when": "editorTextFocus"
       },
       {
-        "command": "codeNotes.previous",
+        "command": "notefold.previous",
         "key": "ctrl+alt+up",
         "mac": "cmd+alt+up",
         "when": "editorTextFocus"
@@ -344,14 +367,14 @@
     "views": {
       "explorer": [
         {
-          "id": "codeNotes.fileNotes",
+          "id": "notefold.fileNotes",
           "name": "Notas del archivo actual"
         }
       ]
     },
     "colors": [
       {
-        "id": "codeNotes.blueRuler",
+        "id": "notefold.blueRuler",
         "description": "Marca en la regla de vista general de las notas de color azul.",
         "defaults": {
           "light": "#1a73e8aa",
@@ -361,7 +384,7 @@
         }
       },
       {
-        "id": "codeNotes.greenRuler",
+        "id": "notefold.greenRuler",
         "description": "Marca en la regla de vista general de las notas de color verde.",
         "defaults": {
           "light": "#1e8e3eaa",
@@ -371,7 +394,7 @@
         }
       },
       {
-        "id": "codeNotes.yellowRuler",
+        "id": "notefold.yellowRuler",
         "description": "Marca en la regla de vista general de las notas de color amarillo.",
         "defaults": {
           "light": "#b08800aa",
@@ -381,7 +404,7 @@
         }
       },
       {
-        "id": "codeNotes.redRuler",
+        "id": "notefold.redRuler",
         "description": "Marca en la regla de vista general de las notas de color rojo.",
         "defaults": {
           "light": "#d93025aa",
@@ -391,7 +414,7 @@
         }
       },
       {
-        "id": "codeNotes.purpleRuler",
+        "id": "notefold.purpleRuler",
         "description": "Marca en la regla de vista general de las notas de color morado.",
         "defaults": {
           "light": "#8250dfaa",
@@ -402,9 +425,9 @@
       }
     ],
     "configuration": {
-      "title": "Code Notes",
+      "title": "NoteFold",
       "properties": {
-        "codeNotes.displayMode": {
+        "notefold.displayMode": {
           "type": "string",
           "enum": [
             "fold",
@@ -419,32 +442,37 @@
           "default": "fold",
           "description": "Cómo se muestran los bloques de nota en el editor."
         },
-        "codeNotes.gutterBar": {
+        "notefold.gutterBar": {
           "type": "boolean",
           "default": true,
           "description": "Dibuja una barra vertical del color de la nota en el margen de cada línea de código anotado."
         },
-        "codeNotes.gutterAddButton": {
+        "notefold.gutterAddButton": {
           "type": "boolean",
           "default": true,
           "description": "Muestra el botón + en el margen para crear una nota en las líneas de código que no son comentarios ni forman parte de otra nota."
         },
-        "codeNotes.showNoteOnLineNumberClick": {
+        "notefold.showNoteOnLineNumberClick": {
           "type": "boolean",
           "default": true,
           "description": "Al hacer clic en el número de una línea anotada (junto a la barra de color) se muestra la nota, igual que al pasar el ratón por @note-start."
         },
-        "codeNotes.inlineTitle": {
+        "notefold.inlineTitle": {
           "type": "boolean",
           "default": true,
           "description": "Muestra el título de la nota (su primera línea) como texto tenue al final de la primera línea de código anotado. Pasar el ratón por ese texto muestra la nota completa."
+        },
+        "notefold.hideMarkers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hace invisibles las líneas @note-start, @note-body-end y @note-end (quedan como líneas en blanco). Reaparecen al editar la nota o al poner el cursor sobre ellas. No se aplica con displayMode: off."
         }
       }
     },
     "viewsWelcome": [
       {
-        "view": "codeNotes.fileNotes",
-        "contents": "No hay notas en el archivo actual.\n[Añadir nota a la selección](command:codeNotes.add)"
+        "view": "notefold.fileNotes",
+        "contents": "No hay notas en el archivo actual.\n[Añadir nota a la selección](command:notefold.add)"
       }
     ],
     "configurationDefaults": {

@@ -26,15 +26,15 @@ export function activate(context: vscode.ExtensionContext): void {
     new GutterNotes(store),
     registerCommentSyntaxInvalidation(),
     ...registerCommands(store, preview, folds),
-    new NoteHoverProvider(store),
+    new NoteHoverProvider(store, (doc, line) => decorations.revealAt(doc, line)),
     vscode.languages.registerCodeActionsProvider(all, new DuplicateIdFixProvider(), {
       providedCodeActionKinds: DuplicateIdFixProvider.kinds,
     }),
-    vscode.window.registerTreeDataProvider('codeNotes.fileNotes', tree),
+    vscode.window.registerTreeDataProvider('notefold.fileNotes', tree),
     vscode.workspace.onDidChangeConfiguration((e) => {
-      if (!e.affectsConfiguration('codeNotes')) return;
+      if (!e.affectsConfiguration('notefold')) return;
       decorations.reset();
-      if (e.affectsConfiguration('codeNotes.displayMode')) void folds.refresh();
+      if (e.affectsConfiguration('notefold.displayMode')) void folds.refresh();
     }),
   );
 

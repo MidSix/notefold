@@ -36,9 +36,9 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<Item>, vscode.
     const last = codeEnd(note) + 1;
     item.description = first === last ? `L${first}` : `L${first}–${last}`;
     item.tooltip = new vscode.MarkdownString(note.body || '_(nota vacía)_');
-    item.iconPath = new vscode.ThemeIcon('circle-filled', new vscode.ThemeColor(`codeNotes.${note.color}Ruler`));
+    item.iconPath = new vscode.ThemeIcon('circle-filled', new vscode.ThemeColor(`notefold.${note.color}Ruler`));
     const ref: NoteRef = { uri: uri.toString(), line: note.startLine };
-    item.command = { command: 'codeNotes.reveal', title: 'Ir a la nota', arguments: [ref] };
+    item.command = { command: 'notefold.reveal', title: 'Ir a la nota', arguments: [ref] };
     return item;
   }
 

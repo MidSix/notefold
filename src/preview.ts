@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { codeEnd, codeStart, Note, noteAtLine } from './parser';
 import { NoteStore } from './store';
 
-export const PREVIEW_SCHEME = 'code-note';
+export const PREVIEW_SCHEME = 'notefold-note';
 
 interface Target {
   doc: vscode.Uri;
@@ -13,7 +13,7 @@ interface Target {
 
 /**
  * Shows a note in the built-in Markdown preview, through a read-only virtual
- * document (`code-note:` scheme) that follows the note as the file changes.
+ * document (`notefold-note:` scheme) that follows the note as the file changes.
  */
 export class NotePreview implements vscode.TextDocumentContentProvider, vscode.Disposable {
   private readonly emitter = new vscode.EventEmitter<vscode.Uri>();

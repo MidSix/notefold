@@ -1,5 +1,5 @@
-# Demo de Code Notes con LaTeX y Mermaid: coloca el cursor en la función y
-# usa "Code Notes: Abrir nota" (Cmd+Alt+O) para ver la nota renderizada.
+# Demo de NoteFold con LaTeX y Mermaid: coloca el cursor en la función y
+# usa "NoteFold: Abrir nota" (Cmd+Alt+O) para ver la nota renderizada.
 
 # @note-start id=jl7bro color=purple
 # ## Broadcast fusionado (`.`)

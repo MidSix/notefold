@@ -1,4 +1,4 @@
-# Code Notes
+# NoteFold — notas de código con LaTeX y Mermaid
 
 Notas explicativas en Markdown ancladas a una línea o a un rango de código, **guardadas dentro del propio archivo como comentarios**. Es una alternativa minimalista a CodeTour: no hay tours, pasos ni orden, solo notas junto al código.
 
@@ -8,6 +8,14 @@ Notas explicativas en Markdown ancladas a una línea o a un rango de código, **
 - Funciona con cualquier lenguaje que tenga comentarios.
 
 La extensión detecta los bloques y los pliega o atenúa. En cada línea de código anotado dibuja una barra vertical del color de la nota en el margen, sin sombrear el código. Al final de la primera línea anotada aparece el título de la nota (su primera línea) como texto tenue, del color de la nota. Al pasar el ratón por ese título o por la línea `@note-start` se muestra la nota renderizada.
+
+## Instalación
+
+- **Desde VS Code**: busca `NoteFold` en la vista de Extensiones (`Cmd+Shift+X` / `Ctrl+Shift+X`) e instálala. Identificador: `MidSix.notefold`.
+- **Desde la terminal**: `code --install-extension MidSix.notefold`
+- **Desde un archivo `.vsix`** (por ejemplo, descargado de las *Releases* de GitHub): en Extensiones, menú `⋯` → *Install from VSIX…*, o `code --install-extension notefold-0.1.0.vsix`.
+
+> Al instalarla, NoteFold cambia el valor por defecto de `editor.foldingHighlight` a `false` para que las notas plegadas no salgan sombreadas. Afecta a todos los plegados; si prefieres el sombreado, pon `"editor.foldingHighlight": true` en tu configuración.
 
 ## Formato
 
@@ -63,19 +71,19 @@ Cómo se decide el rango y dónde aparece el **+**:
 - **Varias líneas**: selecciónalas (hacia arriba o hacia abajo) y pulsa el **+** de una de ellas, o arrastra por el margen. La nota se coloca siempre encima de la primera línea del rango, la de más arriba.
 - **Dónde no aparece el +**: en líneas que forman parte de una nota (de `@note-start` a `@note-end`) ni en comentarios. Si el rango elegido incluye alguna de esas líneas, la nota no se crea y se muestra un aviso: no se pueden anidar notas.
 
-El botón se desactiva con `codeNotes.gutterAddButton: false`.
+El botón se desactiva con `notefold.gutterAddButton: false`.
 
 ## Comandos
 
 | Comando | Atajo (Win/Linux · macOS) |
 |---|---|
-| Code Notes: Añadir nota a la selección | `Ctrl+Alt+N` · `Cmd+Alt+N` |
-| Code Notes: Abrir nota (vista previa lateral) | `Ctrl+Alt+O` · `Cmd+Alt+O` |
-| Code Notes: Siguiente nota | `Ctrl+Alt+↓` · `Cmd+Option+↓` |
-| Code Notes: Nota anterior | `Ctrl+Alt+↑` · `Cmd+Option+↑` |
-| Code Notes: Editar nota | — (también desde el hover) |
-| Code Notes: Borrar nota | — (también desde el hover) |
-| Code Notes: Borrar todas las notas del archivo | — (pide confirmación) |
+| NoteFold: Añadir nota a la selección | `Ctrl+Alt+N` · `Cmd+Alt+N` |
+| NoteFold: Abrir nota (vista previa lateral) | `Ctrl+Alt+O` · `Cmd+Alt+O` |
+| NoteFold: Siguiente nota | `Ctrl+Alt+↓` · `Cmd+Option+↓` |
+| NoteFold: Nota anterior | `Ctrl+Alt+↑` · `Cmd+Option+↑` |
+| NoteFold: Editar nota | — (también desde el hover) |
+| NoteFold: Borrar nota | — (también desde el hover) |
+| NoteFold: Borrar todas las notas del archivo | — (pide confirmación) |
 
 Los atajos se pueden cambiar en *Preferences: Open Keyboard Shortcuts*. Crear y borrar notas se deshace con un solo `Ctrl/Cmd+Z`.
 
@@ -85,17 +93,27 @@ Además, en el Explorador aparece la vista **Notas del archivo actual**, que lis
 
 | Ajuste | Valores | Por defecto |
 |---|---|---|
-| `codeNotes.displayMode` | `fold` (pliega cabecera y cuerpo, atenúa los marcadores) · `dim` (atenúa todo el bloque) · `off` | `fold` |
-| `codeNotes.gutterBar` | barra vertical del color de la nota en el margen de cada línea anotada | `true` |
-| `codeNotes.gutterAddButton` | botón **+** en el margen para crear notas | `true` |
-| `codeNotes.inlineTitle` | título de la nota como texto tenue al final de la primera línea anotada | `true` |
-| `codeNotes.showNoteOnLineNumberClick` | al hacer clic en el número de una línea anotada se muestra la nota | `true` |
+| `notefold.displayMode` | `fold` (pliega cabecera y cuerpo, atenúa los marcadores) · `dim` (atenúa todo el bloque) · `off` | `fold` |
+| `notefold.gutterBar` | barra vertical del color de la nota en el margen de cada línea anotada | `true` |
+| `notefold.gutterAddButton` | botón **+** en el margen para crear notas | `true` |
+| `notefold.hideMarkers` | hace invisibles las líneas `@note-start`, `@note-body-end` y `@note-end`; reaparecen al editar la nota, con el cursor encima o al detener el ratón sobre una de ellas | `true` |
+| `notefold.inlineTitle` | título de la nota como texto tenue al final de la primera línea anotada | `true` |
+| `notefold.showNoteOnLineNumberClick` | al hacer clic en el número de una línea anotada se muestra la nota | `true` |
 
-La marca de cada color en la regla de vista general (`codeNotes.<color>Ruler`, p. ej. `codeNotes.greenRuler`) se puede personalizar con `workbench.colorCustomizations`.
+La marca de cada color en la regla de vista general (`notefold.<color>Ruler`, p. ej. `notefold.greenRuler`) se puede personalizar con `workbench.colorCustomizations`.
 
 La extensión cambia el valor por defecto de `editor.foldingHighlight` a `false`, para que la línea `@note-start` plegada no salga sombreada. Esto afecta a todas las regiones plegadas; si prefieres el sombreado, pon `"editor.foldingHighlight": true` en tu configuración.
 
 Al entrar con el cursor en una nota plegada, se despliega para editarla; al salir, se vuelve a plegar.
+
+## Skills para Claude Code
+
+La carpeta [`skills/`](skills/) incluye dos skills para [Claude Code](https://claude.com/claude-code):
+
+- **`code-notes`**: documenta el código con notas de NoteFold. Anota cada función, método y clase con título, tipo (API pública o auxiliar interna), quién la llama, entradas, salida y, cuando aporta, fórmulas LaTeX y diagramas Mermaid. Incluye scripts que validan las notas, calculan quién llama a cada función y demuestran que el código no ha cambiado.
+- **`remove-code-notes`** (⚠️ destructiva): elimina las notas dejando el código intacto. Pide confirmación Sí/No, guarda una copia de seguridad y verifica con un diff que no se ha perdido ninguna línea de código.
+
+Para instalarlas, copia ambas carpetas a `~/.claude/skills/`. Requisitos: `python3`, y `node` (opcional) para validar LaTeX y Mermaid.
 
 ## Desarrollo
 
@@ -117,18 +135,22 @@ En esa ventana las demás extensiones están deshabilitadas, para aislar la prue
 ## Empaquetar
 
 ```bash
-npm run package          # = vsce package -> code-notes-0.1.0.vsix
-code --install-extension code-notes-0.1.0.vsix
+npm run package          # = vsce package -> notefold-0.1.0.vsix
+code --install-extension notefold-0.1.0.vsix
 ```
 
 ## Limitaciones conocidas
 
-- **Las líneas plegadas no desaparecen del todo.** VS Code no permite ocultar líneas, así que la línea `@note-start` y la de `@note-end` siguen visibles, aunque atenuadas.
+- **Los marcadores no desaparecen del todo.** VS Code no permite a una extensión quitar líneas de la vista. Con `hideMarkers` su texto es invisible, pero la línea sigue ocupando su hueco (se ve en blanco), y en modo `fold` la línea `@note-start` conserva el `⋯` y la flecha de plegado.
 - **Plegado por indentación en archivos con notas.** En lenguajes sin proveedor de plegado propio (Ruby, Shell, Lua o Python sin Pylance), mientras el archivo tenga notas VS Code usa solo los rangos de esta extensión y se pierde su plegado por indentación. Los archivos sin notas no se ven afectados. Si esto te molesta, usa `displayMode: dim`.
 - **`editor.foldingStrategy: "indentation"`** ignora a los proveedores de plegado, así que en ese caso las notas no se pliegan (el resto funciona igual).
 - **Solo se pliega el editor activo.** VS Code solo ofrece comandos de plegado para el editor enfocado, así que un editor dividido en segundo plano se pliega cuando pasa a estar activo.
 - **La barra del margen no responde al ratón.** VS Code no permite a las extensiones mostrar un hover, animaciones ni recibir clics sobre sus iconos del margen. Para ver la nota: pasa el ratón por la línea `@note-start`, haz clic en el **número de línea** de una línea anotada (justo al lado de la barra), usa la vista lateral (`Cmd+Alt+O`) o la vista del Explorador. Un triple clic sobre una línea anotada también selecciona la línea entera, así que también muestra la nota.
 - **Fórmulas en el hover.** El hover de VS Code no renderiza fórmulas matemáticas (`$…$`); se muestran tal cual. La vista lateral (*Abrir*) sí las renderiza.
+- **Mostrar marcadores al pasar el ratón.** VS Code no informa a las extensiones de los movimientos del ratón, así que se usa la petición de hover. Tiene tres consecuencias:
+  - solo reacciona cuando el ratón se **detiene** (tras el retardo del hover, `editor.hover.delay`) sobre la zona donde está el texto invisible, no a la derecha de la línea;
+  - los marcadores se vuelven a ocultar cuando el ratón se detiene en otra línea o a los 2 segundos;
+  - no funciona con `editor.hover.enabled: false`.
 - **Posición del +.** El botón lo dibuja VS Code en la línea sobre la que pasa el ratón; la extensión solo decide en qué líneas se permite. Con una selección, la nota va siempre encima de su primera línea, aunque pulses el **+** de otra línea de la selección.
 - **Detección de comentarios aproximada.** Se mira cada línea: comentarios de línea y bloques `/* … */`. Un delimitador de comentario dentro de un string puede confundirla.
 - **Comentarios de bloque.** En el cuerpo de una nota en estilo bloque no se puede escribir el cierre del comentario (`*/`, `-->`).

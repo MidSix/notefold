@@ -63,13 +63,13 @@ export async function insertNote(
   const syntax = await getCommentSyntax(doc.languageId);
   if (!syntax) {
     void vscode.window.showWarningMessage(
-      `Code Notes: el lenguaje "${doc.languageId}" no define sintaxis de comentarios; no se puede insertar una nota.`,
+      `NoteFold: el lenguaje "${doc.languageId}" no define sintaxis de comentarios; no se puede insertar una nota.`,
     );
     return false;
   }
   const { notes } = await store.get(doc);
   if (notes.some((n) => first <= n.endLine && last >= n.startLine)) {
-    void vscode.window.showWarningMessage('Code Notes: la selección se solapa con una nota existente (no se permiten notas anidadas).');
+    void vscode.window.showWarningMessage('NoteFold: la selección se solapa con una nota existente (no se permiten notas anidadas).');
     return false;
   }
 
@@ -160,7 +160,7 @@ export function registerCommands(store: NoteStore, preview: NotePreview, folds: 
     if (!editor) return;
     const { notes } = await store.get(editor.document);
     if (!notes.length) {
-      vscode.window.setStatusBarMessage('Code Notes: no hay notas en este archivo', 2500);
+      vscode.window.setStatusBarMessage('NoteFold: no hay notas en este archivo', 2500);
       return;
     }
     const line = editor.selection.active.line;
@@ -199,15 +199,15 @@ export function registerCommands(store: NoteStore, preview: NotePreview, folds: 
   };
 
   return [
-    vscode.commands.registerCommand('codeNotes.add', add),
-    vscode.commands.registerCommand('codeNotes.edit', edit),
-    vscode.commands.registerCommand('codeNotes.delete', del),
-    vscode.commands.registerCommand('codeNotes.deleteAll', deleteAll),
-    vscode.commands.registerCommand('codeNotes.next', navigate(1)),
-    vscode.commands.registerCommand('codeNotes.previous', navigate(-1)),
-    vscode.commands.registerCommand('codeNotes.reveal', reveal),
-    vscode.commands.registerCommand('codeNotes.open', open),
-    vscode.commands.registerCommand('codeNotes.regenerateId', regenerateId),
+    vscode.commands.registerCommand('notefold.add', add),
+    vscode.commands.registerCommand('notefold.edit', edit),
+    vscode.commands.registerCommand('notefold.delete', del),
+    vscode.commands.registerCommand('notefold.deleteAll', deleteAll),
+    vscode.commands.registerCommand('notefold.next', navigate(1)),
+    vscode.commands.registerCommand('notefold.previous', navigate(-1)),
+    vscode.commands.registerCommand('notefold.reveal', reveal),
+    vscode.commands.registerCommand('notefold.open', open),
+    vscode.commands.registerCommand('notefold.regenerateId', regenerateId),
   ];
 }
 
@@ -222,12 +222,12 @@ export class DuplicateIdFixProvider implements vscode.CodeActionProvider {
 
   provideCodeActions(doc: vscode.TextDocument, _range: vscode.Range, ctx: vscode.CodeActionContext): vscode.CodeAction[] {
     return ctx.diagnostics
-      .filter((d) => d.source === 'Code Notes' && d.code === 'duplicate-id')
+      .filter((d) => d.source === 'NoteFold' && d.code === 'duplicate-id')
       .map((d) => {
         const action = new vscode.CodeAction('Regenerar id de la nota', vscode.CodeActionKind.QuickFix);
         action.diagnostics = [d];
         action.command = {
-          command: 'codeNotes.regenerateId',
+          command: 'notefold.regenerateId',
           title: 'Regenerar id',
           arguments: [{ uri: doc.uri.toString(), line: d.range.start.line } satisfies NoteRef],
         };

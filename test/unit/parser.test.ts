@@ -6,6 +6,8 @@ import {
   commentLines,
   wholeLineSelection,
   noteTitle,
+  markerLooks,
+  noteWithMarkerAt,
   codeEnd,
   codeStart,
   CommentSyntax,
@@ -419,5 +421,34 @@ describe('noteTitle', () => {
   it('truncates long titles', () => {
     expect(noteTitle('abcdefghij', 6)).toBe('abcde…');
     expect(noteTitle('abc', 6)).toBe('abc');
+  });
+});
+
+describe('markerLooks', () => {
+  const text = src('a', '# @note-start id=a', '# body', '# @note-body-end', 'code', '# @note-end', 'b');
+  const { notes } = parseNotes(text, PY);
+  const look = (cursor: number, mode: 'fold' | 'dim' | 'off', hide: boolean) =>
+    Object.fromEntries(markerLooks(notes, [cursor], mode, hide));
+
+  it('hides every marker when the cursor is elsewhere', () => {
+    expect(look(0, 'fold', true)).toEqual({ 1: 'hidden', 3: 'hidden', 5: 'hidden' });
+    expect(look(4, 'fold', true)).toEqual({ 1: 'hidden', 3: 'hidden', 5: 'hidden' }); // on the code
+  });
+  it('shows the markers while editing the note or standing on a marker', () => {
+    expect(look(2, 'fold', true)).toEqual({ 1: 'dim', 3: 'dim', 5: 'dim' });
+    expect(look(5, 'fold', true)).toEqual({ 1: 'hidden', 3: 'hidden', 5: 'dim' });
+  });
+  it('hovering a marker reveals all three markers of that note', () => {
+    const n = noteWithMarkerAt(notes, 5)!; // hovering @note-end
+    expect(noteWithMarkerAt(notes, 4)).toBeUndefined(); // code line
+    expect(noteWithMarkerAt(notes, 2)).toBeUndefined(); // body line
+    const revealed = [n.startLine, n.bodyEndLine, n.endLine];
+    expect(Object.fromEntries(markerLooks(notes, [0, ...revealed], 'fold', true))).toEqual({ 1: 'dim', 3: 'dim', 5: 'dim' });
+  });
+
+  it('keeps the previous behaviour when hiding is off, and never touches off mode', () => {
+    expect(look(0, 'fold', false)).toEqual({ 1: 'dim', 3: 'dim', 5: 'dim' });
+    expect(look(0, 'dim', false)).toEqual({ 1: 'faint', 3: 'faint', 5: 'faint' });
+    expect(look(0, 'off', true)).toEqual({});
   });
 });
