@@ -1,0 +1,10 @@
+/* CSS solo tiene comentarios de bloque: la nota usa ese estilo. */
+
+.button {
+  /* @note-start id=css7aa
+  Color principal del botón. Se usa también en los *links*.
+  @note-body-end */
+  color: #3794ff;
+  /* @note-end */
+  padding: 4px 8px;
+}

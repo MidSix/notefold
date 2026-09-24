@@ -1,0 +1,470 @@
+{
+  "name": "code-notes",
+  "displayName": "Code Notes",
+  "description": "Notas Markdown ancladas a líneas o rangos de código, guardadas como comentarios en el propio archivo.",
+  "version": "0.1.0",
+  "publisher": "sebastian-moreno",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "notes",
+    "annotations",
+    "comments",
+    "codetour"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeNotes.add",
+        "title": "Añadir nota a la selección",
+        "category": "Code Notes",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "codeNotes.open",
+        "title": "Abrir nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.edit",
+        "title": "Editar nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.delete",
+        "title": "Borrar nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.deleteAll",
+        "title": "Borrar todas las notas del archivo",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.next",
+        "title": "Siguiente nota",
+        "category": "Code Notes",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "codeNotes.previous",
+        "title": "Nota anterior",
+        "category": "Code Notes",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "codeNotes.reveal",
+        "title": "Ir a la nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.regenerateId",
+        "title": "Regenerar id de la nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.gutter.create",
+        "title": "Crear nota",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.gutter.cancel",
+        "title": "Cancelar",
+        "category": "Code Notes"
+      },
+      {
+        "command": "codeNotes.gutter.color.blue",
+        "title": "Color: Azul",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-blue-light.svg",
+          "dark": "media/color-blue-dark.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.color.green",
+        "title": "Color: Verde",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-green-light.svg",
+          "dark": "media/color-green-dark.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.color.yellow",
+        "title": "Color: Amarillo",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-yellow-light.svg",
+          "dark": "media/color-yellow-dark.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.color.red",
+        "title": "Color: Rojo",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-red-light.svg",
+          "dark": "media/color-red-dark.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.color.purple",
+        "title": "Color: Morado",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-purple-light.svg",
+          "dark": "media/color-purple-dark.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.selected.blue",
+        "title": "Color: Azul (elegido)",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-blue-light-selected.svg",
+          "dark": "media/color-blue-dark-selected.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.selected.green",
+        "title": "Color: Verde (elegido)",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-green-light-selected.svg",
+          "dark": "media/color-green-dark-selected.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.selected.yellow",
+        "title": "Color: Amarillo (elegido)",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-yellow-light-selected.svg",
+          "dark": "media/color-yellow-dark-selected.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.selected.red",
+        "title": "Color: Rojo (elegido)",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-red-light-selected.svg",
+          "dark": "media/color-red-dark-selected.svg"
+        }
+      },
+      {
+        "command": "codeNotes.gutter.selected.purple",
+        "title": "Color: Morado (elegido)",
+        "category": "Code Notes",
+        "icon": {
+          "light": "media/color-purple-light-selected.svg",
+          "dark": "media/color-purple-dark-selected.svg"
+        }
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "codeNotes.reveal",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.regenerateId",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.create",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.cancel",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.color.blue",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.color.green",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.color.yellow",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.color.red",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.color.purple",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.selected.blue",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.selected.green",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.selected.yellow",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.selected.red",
+          "when": "false"
+        },
+        {
+          "command": "codeNotes.gutter.selected.purple",
+          "when": "false"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "codeNotes.add",
+          "group": "codeNotes@1",
+          "when": "editorTextFocus"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "codeNotes.previous",
+          "when": "view == codeNotes.fileNotes",
+          "group": "navigation@1"
+        },
+        {
+          "command": "codeNotes.next",
+          "when": "view == codeNotes.fileNotes",
+          "group": "navigation@2"
+        }
+      ],
+      "comments/commentThread/context": [
+        {
+          "command": "codeNotes.gutter.cancel",
+          "group": "inline@1",
+          "when": "commentController == codeNotes"
+        },
+        {
+          "command": "codeNotes.gutter.create",
+          "group": "inline@2",
+          "when": "commentController == codeNotes"
+        }
+      ],
+      "comments/commentThread/title": [
+        {
+          "command": "codeNotes.gutter.color.blue",
+          "group": "inline@1",
+          "when": "commentController == codeNotes && commentThread && commentThread != codeNotes.color.blue"
+        },
+        {
+          "command": "codeNotes.gutter.selected.blue",
+          "group": "inline@1",
+          "when": "commentController == codeNotes && (commentThread == codeNotes.color.blue || !commentThread)"
+        },
+        {
+          "command": "codeNotes.gutter.color.green",
+          "group": "inline@2",
+          "when": "commentController == codeNotes && commentThread != codeNotes.color.green"
+        },
+        {
+          "command": "codeNotes.gutter.selected.green",
+          "group": "inline@2",
+          "when": "commentController == codeNotes && commentThread == codeNotes.color.green"
+        },
+        {
+          "command": "codeNotes.gutter.color.yellow",
+          "group": "inline@3",
+          "when": "commentController == codeNotes && commentThread != codeNotes.color.yellow"
+        },
+        {
+          "command": "codeNotes.gutter.selected.yellow",
+          "group": "inline@3",
+          "when": "commentController == codeNotes && commentThread == codeNotes.color.yellow"
+        },
+        {
+          "command": "codeNotes.gutter.color.red",
+          "group": "inline@4",
+          "when": "commentController == codeNotes && commentThread != codeNotes.color.red"
+        },
+        {
+          "command": "codeNotes.gutter.selected.red",
+          "group": "inline@4",
+          "when": "commentController == codeNotes && commentThread == codeNotes.color.red"
+        },
+        {
+          "command": "codeNotes.gutter.color.purple",
+          "group": "inline@5",
+          "when": "commentController == codeNotes && commentThread != codeNotes.color.purple"
+        },
+        {
+          "command": "codeNotes.gutter.selected.purple",
+          "group": "inline@5",
+          "when": "commentController == codeNotes && commentThread == codeNotes.color.purple"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "codeNotes.add",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n",
+        "when": "editorTextFocus && !editorReadonly"
+      },
+      {
+        "command": "codeNotes.open",
+        "key": "ctrl+alt+o",
+        "mac": "cmd+alt+o",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codeNotes.next",
+        "key": "ctrl+alt+down",
+        "mac": "cmd+alt+down",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codeNotes.previous",
+        "key": "ctrl+alt+up",
+        "mac": "cmd+alt+up",
+        "when": "editorTextFocus"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "codeNotes.fileNotes",
+          "name": "Notas del archivo actual"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "id": "codeNotes.blueRuler",
+        "description": "Marca en la regla de vista general de las notas de color azul.",
+        "defaults": {
+          "light": "#1a73e8aa",
+          "dark": "#3794ffaa",
+          "highContrast": "#3794ff",
+          "highContrastLight": "#1a73e8"
+        }
+      },
+      {
+        "id": "codeNotes.greenRuler",
+        "description": "Marca en la regla de vista general de las notas de color verde.",
+        "defaults": {
+          "light": "#1e8e3eaa",
+          "dark": "#3fb950aa",
+          "highContrast": "#3fb950",
+          "highContrastLight": "#1e8e3e"
+        }
+      },
+      {
+        "id": "codeNotes.yellowRuler",
+        "description": "Marca en la regla de vista general de las notas de color amarillo.",
+        "defaults": {
+          "light": "#b08800aa",
+          "dark": "#d29922aa",
+          "highContrast": "#d29922",
+          "highContrastLight": "#b08800"
+        }
+      },
+      {
+        "id": "codeNotes.redRuler",
+        "description": "Marca en la regla de vista general de las notas de color rojo.",
+        "defaults": {
+          "light": "#d93025aa",
+          "dark": "#f85149aa",
+          "highContrast": "#f85149",
+          "highContrastLight": "#d93025"
+        }
+      },
+      {
+        "id": "codeNotes.purpleRuler",
+        "description": "Marca en la regla de vista general de las notas de color morado.",
+        "defaults": {
+          "light": "#8250dfaa",
+          "dark": "#a371f7aa",
+          "highContrast": "#a371f7",
+          "highContrastLight": "#8250df"
+        }
+      }
+    ],
+    "configuration": {
+      "title": "Code Notes",
+      "properties": {
+        "codeNotes.displayMode": {
+          "type": "string",
+          "enum": [
+            "fold",
+            "dim",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Pliega la cabecera y el cuerpo de cada nota y atenúa los marcadores visibles.",
+            "No pliega; atenúa todo el bloque de la nota.",
+            "Muestra el bloque tal cual (solo indicador en el margen)."
+          ],
+          "default": "fold",
+          "description": "Cómo se muestran los bloques de nota en el editor."
+        },
+        "codeNotes.gutterBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Dibuja una barra vertical del color de la nota en el margen de cada línea de código anotado."
+        },
+        "codeNotes.gutterAddButton": {
+          "type": "boolean",
+          "default": true,
+          "description": "Muestra el botón + en el margen para crear una nota en las líneas de código que no son comentarios ni forman parte de otra nota."
+        },
+        "codeNotes.showNoteOnLineNumberClick": {
+          "type": "boolean",
+          "default": true,
+          "description": "Al hacer clic en el número de una línea anotada (junto a la barra de color) se muestra la nota, igual que al pasar el ratón por @note-start."
+        }
+      }
+    },
+    "viewsWelcome": [
+      {
+        "view": "codeNotes.fileNotes",
+        "contents": "No hay notas en el archivo actual.\n[Añadir nota a la selección](command:codeNotes.add)"
+      }
+    ],
+    "configurationDefaults": {
+      "editor.foldingHighlight": false
+    }
+  },
+  "scripts": {
+    "compile": "npm run typecheck && node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "vitest run",
+    "test:integration": "npm run compile && tsc -p test/integration && node out/test/integration/runTest.js",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run typecheck && node esbuild.mjs --production",
+    "try": "npm run compile && node try.mjs"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.2",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "mocha": "^12.0.2",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1"
+  }
+}
