@@ -259,6 +259,20 @@ suite('Code Notes', () => {
     );
   });
 
+  test('open note passes LaTeX and Mermaid intact to the Markdown preview (Julia)', async () => {
+    const editor = await openExample('demo.jl');
+    assert.strictEqual(editor.document.languageId, 'julia');
+    place(editor, lineOf(editor.document, 'y .= a .* x .+ b'));
+    await vscode.commands.executeCommand('codeNotes.open');
+    let text = '';
+    await waitFor(() => {
+      text = vscode.workspace.textDocuments.find((d) => d.uri.scheme === 'code-note' && d.getText().includes('Broadcast'))?.getText() ?? '';
+      return !!text;
+    }, 'virtual note document');
+    assert.ok(text.includes('$$\ny_i = a \\, x_i + b \\qquad \\forall\\, i \\in 1,\\dots,n\n$$'), text);
+    assert.ok(text.includes('```mermaid\nflowchart LR\n    A["y .= a .* x .+ b"]'), text);
+  });
+
   test('block-comment languages (CSS) are parsed and hovered', async () => {
     const editor = await openExample('demo.css');
     const text = await hoverText(editor.document, lineOf(editor.document, 'id=css7aa'), 6);
