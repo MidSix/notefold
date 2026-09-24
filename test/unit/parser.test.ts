@@ -5,6 +5,7 @@ import {
   commentingRanges,
   commentLines,
   wholeLineSelection,
+  noteTitle,
   codeEnd,
   codeStart,
   CommentSyntax,
@@ -406,5 +407,17 @@ describe('wholeLineSelection', () => {
     expect(wholeLineSelection(p(4, 2), p(5, 0), 9, 3)).toBeUndefined();
     expect(wholeLineSelection(p(4, 0), p(6, 0), 9, 3)).toBeUndefined(); // two lines
     expect(wholeLineSelection(p(9, 0), p(9, 0), 9, 0)).toBeUndefined(); // empty last line
+  });
+});
+
+describe('noteTitle', () => {
+  it('takes the first non-empty line without Markdown markers', () => {
+    expect(noteTitle('\n## Suma de prefijos\nmás texto')).toBe('Suma de prefijos');
+    expect(noteTitle('- punto\\')).toBe('punto');
+    expect(noteTitle('')).toBe('(nota vacía)');
+  });
+  it('truncates long titles', () => {
+    expect(noteTitle('abcdefghij', 6)).toBe('abcde…');
+    expect(noteTitle('abc', 6)).toBe('abc');
   });
 });

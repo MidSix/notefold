@@ -433,6 +433,11 @@
           "type": "boolean",
           "default": true,
           "description": "Al hacer clic en el número de una línea anotada (junto a la barra de color) se muestra la nota, igual que al pasar el ratón por @note-start."
+        },
+        "codeNotes.inlineTitle": {
+          "type": "boolean",
+          "default": true,
+          "description": "Muestra el título de la nota (su primera línea) como texto tenue al final de la primera línea de código anotado. Pasar el ratón por ese texto muestra la nota completa."
         }
       }
     },

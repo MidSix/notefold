@@ -154,6 +154,15 @@ suite('Code Notes', () => {
     assert.ok(!text.includes('media ponderada'), text);
   });
 
+  test('hover at the end of the first annotated line (ghost title) shows the note', async () => {
+    const editor = await openExample('demo.py');
+    const line = lineOf(editor.document, 'total = sum');
+    const end = editor.document.lineAt(line).text.length;
+    assert.ok((await hoverText(editor.document, line, end)).includes('media ponderada'));
+    const second = line + 1; // not the first annotated line
+    assert.ok(!(await hoverText(editor.document, second, editor.document.lineAt(second).text.length)).includes('media ponderada'));
+  });
+
   test('folded regions are not highlighted (editor.foldingHighlight default)', () => {
     assert.strictEqual(vscode.workspace.getConfiguration('editor').get('foldingHighlight'), false);
   });

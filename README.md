@@ -7,7 +7,7 @@ Notas explicativas en Markdown ancladas a una línea o a un rango de código, **
 - Quien no tenga la extensión ve un bloque de comentarios normal.
 - Funciona con cualquier lenguaje que tenga comentarios.
 
-La extensión detecta los bloques y los pliega o atenúa. En cada línea de código anotado dibuja una barra vertical del color de la nota en el margen, sin sombrear el código. Al pasar el ratón por la línea `@note-start` se muestra la nota renderizada.
+La extensión detecta los bloques y los pliega o atenúa. En cada línea de código anotado dibuja una barra vertical del color de la nota en el margen, sin sombrear el código. Al final de la primera línea anotada aparece el título de la nota (su primera línea) como texto tenue, del color de la nota. Al pasar el ratón por ese título o por la línea `@note-start` se muestra la nota renderizada.
 
 ## Formato
 
@@ -88,6 +88,7 @@ Además, en el Explorador aparece la vista **Notas del archivo actual**, que lis
 | `codeNotes.displayMode` | `fold` (pliega cabecera y cuerpo, atenúa los marcadores) · `dim` (atenúa todo el bloque) · `off` | `fold` |
 | `codeNotes.gutterBar` | barra vertical del color de la nota en el margen de cada línea anotada | `true` |
 | `codeNotes.gutterAddButton` | botón **+** en el margen para crear notas | `true` |
+| `codeNotes.inlineTitle` | título de la nota como texto tenue al final de la primera línea anotada | `true` |
 | `codeNotes.showNoteOnLineNumberClick` | al hacer clic en el número de una línea anotada se muestra la nota | `true` |
 
 La marca de cada color en la regla de vista general (`codeNotes.<color>Ruler`, p. ej. `codeNotes.greenRuler`) se puede personalizar con `workbench.colorCustomizations`.

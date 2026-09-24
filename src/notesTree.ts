@@ -1,17 +1,11 @@
 import * as vscode from 'vscode';
 import type { NoteRef } from './commands';
-import { codeEnd, codeStart, Note } from './parser';
+import { codeEnd, codeStart, Note, noteTitle } from './parser';
 import { NoteStore } from './store';
 
 interface Item {
   uri: vscode.Uri;
   note: Note;
-}
-
-/** First meaningful line of the Markdown body, without heading/list markers. */
-export function noteTitle(body: string): string {
-  const line = body.split('\n').find((l) => l.trim()) ?? '';
-  return line.replace(/^\s*(#{1,6}\s+|[-*+]\s+|>\s*)/, '').trim() || '(nota vacía)';
 }
 
 export class NotesTreeProvider implements vscode.TreeDataProvider<Item>, vscode.Disposable {

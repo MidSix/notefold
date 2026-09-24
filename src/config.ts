@@ -8,3 +8,4 @@ export const displayMode = (): DisplayMode => cfg().get<DisplayMode>('displayMod
 export const gutterBar = (): boolean => cfg().get<boolean>('gutterBar', true);
 export const gutterAddButton = (): boolean => cfg().get<boolean>('gutterAddButton', true);
 export const showNoteOnLineNumberClick = (): boolean => cfg().get<boolean>('showNoteOnLineNumberClick', true);
+export const inlineTitle = (): boolean => cfg().get<boolean>('inlineTitle', true);

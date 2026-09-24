@@ -1,13 +1,16 @@
 import * as vscode from 'vscode';
 import { PALETTE } from './colors';
-import { displayMode, gutterBar } from './config';
-import { codeEnd, codeStart, Note, NOTE_COLORS, NoteColor, noteAtLine } from './parser';
+import { displayMode, gutterBar, inlineTitle } from './config';
+import { codeEnd, codeStart, Note, NOTE_COLORS, NoteColor, noteAtLine, noteTitle } from './parser';
 import { NoteStore } from './store';
 
 // Every annotated code line gets a vertical bar in the gutter, in the note's
 // colour, and nothing else: no background, so the code reads as usual. Gutter
 // icons cannot use ThemeColor, so the bar is an SVG with a light and a dark
 // variant; the overview ruler mark uses a theme colour.
+//
+// The first annotated line also shows the note's title as faint "ghost text"
+// after the code (like GitLens blame); hovering it shows the whole note.
 
 function barSvg(color: string): vscode.Uri {
   const xml = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect x="12" y="0" width="3" height="16" fill="${color}"/></svg>`;
@@ -19,6 +22,8 @@ interface Types {
   blockDim: vscode.TextEditorDecorationType;
   /** Gutter bar + overview ruler mark, one per colour. */
   code: Record<NoteColor, vscode.TextEditorDecorationType>;
+  /** Note title after the first annotated line (text and colour per instance). */
+  title: vscode.TextEditorDecorationType;
 }
 
 function createTypes(): Types {
@@ -39,10 +44,13 @@ function createTypes(): Types {
     // `textDecoration` is the documented way to inject extra CSS (smaller font).
     blockDim: vscode.window.createTextEditorDecorationType({ opacity: '0.3', textDecoration: 'none; font-size: 0.85em', isWholeLine: true }),
     code,
+    title: vscode.window.createTextEditorDecorationType({
+      after: { margin: '0 0 0 2.5em', fontStyle: 'italic' },
+    }),
   };
 }
 
-const allTypes = (t: Types): vscode.TextEditorDecorationType[] => [t.markerDim, t.blockDim, ...Object.values(t.code)];
+const allTypes = (t: Types): vscode.TextEditorDecorationType[] => [t.markerDim, t.blockDim, t.title, ...Object.values(t.code)];
 
 const lines = (from: number, to: number): vscode.Range[] => {
   const out: vscode.Range[] = [];
@@ -98,6 +106,8 @@ export class DecorationManager implements vscode.Disposable {
     const markerDim: vscode.Range[] = [];
     const blockDim: vscode.Range[] = [];
     const code = Object.fromEntries(NOTE_COLORS.map((c) => [c, [] as vscode.Range[]])) as Record<NoteColor, vscode.Range[]>;
+    const titles: vscode.DecorationOptions[] = [];
+    const showTitles = inlineTitle();
 
     for (const n of notes) {
       const markers = [...lines(n.startLine, n.startLine), ...lines(n.bodyEndLine, n.bodyEndLine), ...lines(n.endLine, n.endLine)];
@@ -105,12 +115,22 @@ export class DecorationManager implements vscode.Disposable {
       else if (mode === 'dim') blockDim.push(...lines(n.startLine, n.bodyEndLine), ...lines(n.endLine, n.endLine));
       // One range per line so the gutter bar is drawn on every annotated line.
       code[n.color].push(...lines(codeStart(n), codeEnd(n)));
+      if (showTitles) {
+        const end = editor.document.lineAt(codeStart(n)).range.end;
+        titles.push({
+          range: new vscode.Range(end, end),
+          renderOptions: {
+            after: { contentText: `💬 ${noteTitle(n.body, 60)}`, color: new vscode.ThemeColor(`codeNotes.${n.color}Ruler`) },
+          },
+        });
+      }
     }
 
     const t = this.types;
     editor.setDecorations(t.markerDim, markerDim);
     editor.setDecorations(t.blockDim, blockDim);
     for (const c of NOTE_COLORS) editor.setDecorations(t.code[c], code[c]);
+    editor.setDecorations(t.title, titles);
   }
 
   dispose(): void {

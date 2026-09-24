@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import type { NoteRef } from './commands';
 import { showNoteOnLineNumberClick } from './config';
-import { Note, noteAtLine, wholeLineSelection } from './parser';
+import { codeStart, Note, noteAtLine, wholeLineSelection } from './parser';
 import { NoteStore } from './store';
 
 const ACTIONS = ['codeNotes.open', 'codeNotes.edit', 'codeNotes.delete'];
@@ -11,8 +11,9 @@ const commandLink = (label: string, command: string, ref: NoteRef): string =>
 
 /**
  * Shows a note's hover:
- * - when hovering its `@note-start` line (never on the annotated code, so the
- *   code keeps its usual hovers and nothing pops up while typing);
+ * - when hovering its `@note-start` line, or the ghost-text title after the
+ *   first annotated line (never on the code itself, so it keeps its usual
+ *   hovers and nothing pops up while typing);
  * - when the line number of an annotated line is clicked (next to the gutter
  *   bar). VS Code has no API for clicks on the gutter itself, but a click on
  *   a line number selects that whole line, which we can detect.
@@ -50,7 +51,9 @@ export class NoteHoverProvider implements vscode.HoverProvider, vscode.Disposabl
       const note = noteAtLine(notes, forced.line);
       if (note) return this.hover(doc, note, pos);
     }
-    const note = notes.find((n) => n.startLine === pos.line);
+    // Hovering the ghost text after the code reports the end-of-line position.
+    const atLineEnd = pos.character >= doc.lineAt(pos.line).text.length;
+    const note = notes.find((n) => n.startLine === pos.line || (atLineEnd && codeStart(n) === pos.line));
     return note && this.hover(doc, note, pos);
   }
 

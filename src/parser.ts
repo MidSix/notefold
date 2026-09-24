@@ -439,3 +439,10 @@ export function wholeLineSelection(
   if (start.line === lastLine && end.line === lastLine && end.character === lastLineLength && lastLineLength > 0) return start.line;
   return undefined;
 }
+
+/** First meaningful line of the Markdown body, without heading/list markers. */
+export function noteTitle(body: string, maxLength = Infinity): string {
+  const line = body.split('\n').find((l) => l.trim()) ?? '';
+  const title = line.replace(/^\s*(#{1,6}\s+|[-*+]\s+|>\s*)/, '').replace(/\\$/, '').trim() || '(nota vacía)';
+  return title.length > maxLength ? `${title.slice(0, maxLength - 1).trimEnd()}…` : title;
+}
