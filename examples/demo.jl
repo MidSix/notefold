@@ -2,7 +2,7 @@
 # usa "NoteFold: Abrir nota" (Cmd+Alt+O) para ver la nota renderizada.
 
 # @note-start id=jl7bro color=purple
-# ## Broadcast fusionado (`.`)
+# Broadcast fusionado (`.`)
 # `y .= a .* x .+ b` no crea arrays temporales: Julia **fusiona** todos los
 # operadores con punto en un único bucle que escribe directamente en `y`.
 #
@@ -26,7 +26,7 @@ end
 # @note-end
 
 # @note-start id=jl2dsp color=green
-# ## Despacho múltiple
+# Despacho múltiple
 # Julia elige el método según el tipo de **todos** los argumentos:
 #
 # ```mermaid

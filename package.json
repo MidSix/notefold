@@ -2,7 +2,7 @@
   "name": "notefold",
   "displayName": "NoteFold — Inline Code Notes with LaTeX & Mermaid",
   "description": "Markdown notes anchored to lines of code, stored in the file itself as regular comments. Folded out of the way, with colour bars, inline titles, and LaTeX & Mermaid rendering.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "MidSix",
   "author": {
     "name": "Sebastián Expósito",
@@ -101,6 +101,16 @@
       },
       {
         "command": "notefold.gutter.cancel",
+        "title": "Cancelar",
+        "category": "NoteFold"
+      },
+      {
+        "command": "notefold.gutter.save",
+        "title": "Guardar",
+        "category": "NoteFold"
+      },
+      {
+        "command": "notefold.gutter.cancelEdit",
         "title": "Cancelar",
         "category": "NoteFold"
       },
@@ -214,6 +224,14 @@
           "when": "false"
         },
         {
+          "command": "notefold.gutter.save",
+          "when": "false"
+        },
+        {
+          "command": "notefold.gutter.cancelEdit",
+          "when": "false"
+        },
+        {
           "command": "notefold.gutter.color.blue",
           "when": "false"
         },
@@ -283,6 +301,18 @@
           "command": "notefold.gutter.cancel",
           "group": "inline@2",
           "when": "commentController == notefold"
+        }
+      ],
+      "comments/comment/context": [
+        {
+          "command": "notefold.gutter.save",
+          "group": "inline@1",
+          "when": "commentController == notefold && comment == notefold.editing"
+        },
+        {
+          "command": "notefold.gutter.cancelEdit",
+          "group": "inline@2",
+          "when": "commentController == notefold && comment == notefold.editing"
         }
       ],
       "comments/commentThread/title": [

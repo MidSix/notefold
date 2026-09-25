@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- **Editar** abre el mismo formulario que al crear una nota, relleno con su texto y su color, con los botones **Guardar** y **Cancelar**, en lugar de llevar el cursor al comentario. Guardar conserva el `id` y la sintaxis de comentario de la nota y se deshace con un solo `Ctrl/Cmd+Z`.
+
 ## 0.1.0
 
 Primera versión.

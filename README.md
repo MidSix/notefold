@@ -73,6 +73,12 @@ Cómo se decide el rango y dónde aparece el **+**:
 
 El botón se desactiva con `notefold.gutterAddButton: false`.
 
+## Editar notas
+
+**Editar** (en el hover de la nota o con el comando *NoteFold: Editar nota*) abre el mismo formulario encima del código anotado, ya relleno con el texto actual de la nota y con su color enmarcado. Cambia el texto o el color y pulsa **Guardar** (o `Ctrl/Cmd+Enter`); **Cancelar** lo cierra sin tocar el archivo. Guardar reescribe solo el cuerpo y el color del bloque, conserva el `id` y la sintaxis de comentario con la que se escribió la nota, y se deshace con un solo `Ctrl/Cmd+Z`.
+
+Una nota no puede quedar vacía: para quitarla usa **Borrar**. También puedes seguir editando el comentario directamente en el código.
+
 ## Comandos
 
 | Comando | Atajo (Win/Linux · macOS) |
@@ -81,7 +87,7 @@ El botón se desactiva con `notefold.gutterAddButton: false`.
 | NoteFold: Abrir nota (vista previa lateral) | `Ctrl+Alt+O` · `Cmd+Alt+O` |
 | NoteFold: Siguiente nota | `Ctrl+Alt+↓` · `Cmd+Option+↓` |
 | NoteFold: Nota anterior | `Ctrl+Alt+↑` · `Cmd+Option+↑` |
-| NoteFold: Editar nota | — (también desde el hover) |
+| NoteFold: Editar nota (formulario) | — (también desde el hover) |
 | NoteFold: Borrar nota | — (también desde el hover) |
 | NoteFold: Borrar todas las notas del archivo | — (pide confirmación) |
 
@@ -135,8 +141,8 @@ En esa ventana las demás extensiones están deshabilitadas, para aislar la prue
 ## Empaquetar
 
 ```bash
-npm run package          # = vsce package -> notefold-0.1.0.vsix
-code --install-extension notefold-0.1.0.vsix
+npm run package          # = vsce package -> notefold-<versión>.vsix
+code --install-extension notefold-0.2.0.vsix
 ```
 
 ## Limitaciones conocidas

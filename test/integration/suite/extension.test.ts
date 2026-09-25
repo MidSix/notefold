@@ -182,14 +182,16 @@ suite('NoteFold', () => {
     await waitFor(() => !isVisible(editor, body), 'folded again when the cursor leaves');
   });
 
-  test('edit command places the cursor in the body and unfolds', async () => {
+  test('edit command (from the cursor) opens the form instead of jumping into the comment', async () => {
     const editor = await openExample('demo.cpp');
     const start = lineOf(editor.document, 'id=c9v1re');
     await waitFor(() => !isVisible(editor, start + 1), 'folded');
     place(editor, start + 10);
-    await vscode.commands.executeCommand('notefold.edit');
-    assert.strictEqual(editor.selection.active.line, start + 1);
-    await waitFor(() => isVisible(editor, start + 1), 'unfolded for editing');
+    const comment = (await vscode.commands.executeCommand('notefold.edit')) as vscode.Comment;
+    assert.ok(typeof comment.body === 'string' && comment.body.length > 0, 'form holds the note body');
+    assert.strictEqual(editor.selection.active.line, start + 10, 'cursor stays in the code');
+    assert.ok(!isVisible(editor, start + 1), 'note stays folded');
+    await vscode.commands.executeCommand('notefold.gutter.cancelEdit');
   });
 
   test('dim / off modes do not fold; switching back to fold folds again', async () => {
@@ -340,5 +342,38 @@ suite('NoteFold', () => {
     }
     await vscode.commands.executeCommand('notefold.gutter.create', { thread: fakeThread(editor.document.uri, new vscode.Range(0, 0, 0, 0)), text: '  ' });
     assert.strictEqual(editor.document.getText(), text);
+  });
+
+  test('edit: opens the note form with its body and saves the new body', async () => {
+    const text = 'x = 0\n# @note-start id=abc123\n# vieja\n# @note-body-end\na = 1\n# @note-end\n';
+    const editor = await open('python', text);
+    const ref = { uri: editor.document.uri.toString(), line: 4 };
+    const comment = (await vscode.commands.executeCommand('notefold.edit', ref)) as vscode.Comment;
+    assert.strictEqual(comment.body, 'vieja', 'form starts with the current body');
+    await waitFor(() => comment.mode === vscode.CommentMode.Editing, 'switches to editing mode');
+    assert.strictEqual(editor.document.getText(), text, 'opening the form does not touch the file');
+
+    // What VS Code does when the user types and presses "Guardar".
+    comment.body = 'nueva\n\n- punto';
+    await vscode.commands.executeCommand('notefold.gutter.save', comment);
+    assert.strictEqual(
+      editor.document.getText(),
+      'x = 0\n# @note-start id=abc123\n# nueva\n# \n# - punto\n# @note-body-end\na = 1\n# @note-end\n',
+    );
+    await vscode.commands.executeCommand('undo');
+    assert.strictEqual(editor.document.getText(), text, 'one undo step');
+  });
+
+  test('edit: empty text is refused and cancel leaves the file untouched', async () => {
+    const text = '# @note-start id=abc123\n# vieja\n# @note-body-end\na = 1\n# @note-end\n';
+    const editor = await open('python', text);
+    const comment = (await vscode.commands.executeCommand('notefold.edit', { uri: editor.document.uri.toString(), line: 0 })) as vscode.Comment;
+    comment.body = '   ';
+    await vscode.commands.executeCommand('notefold.gutter.save', comment);
+    assert.strictEqual(editor.document.getText(), text);
+    await vscode.commands.executeCommand('notefold.gutter.cancelEdit');
+    comment.body = 'otra';
+    await vscode.commands.executeCommand('notefold.gutter.save', comment);
+    assert.strictEqual(editor.document.getText(), text, 'a closed form cannot save');
   });
 });

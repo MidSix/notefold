@@ -329,16 +329,24 @@ export interface NoteContent {
   color?: NoteColor;
 }
 
-/** Builds the text of a new note. Prefers line comments. */
-export function buildNoteBlock(syntax: CommentSyntax, indent: string, id: string, content: NoteContent = {}): NoteBlockText | undefined {
-  const attrs = `id=${id}${content.color && content.color !== DEFAULT_COLOR ? ` color=${content.color}` : ''}`;
-  const body = (content.body ?? '')
+/** Body lines of a note as they are written into the comment. */
+function bodyLines(body: string | undefined): string[] {
+  return (body ?? '')
     .replace(/\r\n?/g, '\n')
     .replace(/\s+$/, '')
     .split('\n')
     // A Markdown hard break written as two trailing spaces would be lost to
     // trimming (ours, or "trim trailing whitespace" on save): use `\` instead.
     .map((l) => l.replace(/(\S) {2,}$/, '$1\\').trimEnd());
+}
+
+/** The body lives inside a block comment: break any closing token it contains. */
+const safeInBlock = (line: string, close: string): string => line.split(close).join(close.split('').join(' '));
+
+/** Builds the text of a new note. Prefers line comments. */
+export function buildNoteBlock(syntax: CommentSyntax, indent: string, id: string, content: NoteContent = {}): NoteBlockText | undefined {
+  const attrs = `id=${id}${content.color && content.color !== DEFAULT_COLOR ? ` color=${content.color}` : ''}`;
+  const body = bodyLines(content.body);
   let header: string[];
   let footer: string[];
   if (syntax.lineComment) {
@@ -347,15 +355,41 @@ export function buildNoteBlock(syntax: CommentSyntax, indent: string, id: string
     footer = [`${indent}${lc} @note-end`];
   } else if (syntax.blockComment) {
     const [open, close] = syntax.blockComment;
-    // The body lives inside the comment: break any closing token it contains.
-    const safe = body.map((l) => l.split(close).join(close.split('').join(' ')));
-    header = [`${indent}${open} @note-start ${attrs}`, ...safe.map((l) => `${indent}${l}`), `${indent}@note-body-end ${close}`];
+    header = [`${indent}${open} @note-start ${attrs}`, ...body.map((l) => `${indent}${safeInBlock(l, close)}`), `${indent}@note-body-end ${close}`];
     footer = [`${indent}${open} @note-end ${close}`];
   } else {
     return undefined;
   }
   const cursorLine = header.length - 2;
   return { header, footer, cursorLine, cursorColumn: header[cursorLine].length };
+}
+
+/** Sets `color=` on a `@note-start` line (removed for the default colour). */
+export function withColor(startLineText: string, color: NoteColor): string {
+  const plain = startLineText.replace(/\s+color=\S*/, '');
+  if (color === DEFAULT_COLOR) return plain;
+  return plain.replace(/@note-start(\s+id=[A-Za-z0-9_-]+)?/, (m) => `${m} color=${color}`);
+}
+
+/**
+ * New text of lines startLine..bodyEndLine of an existing note after editing
+ * its body and colour. The comment tokens are taken from the note's own
+ * marker lines, so the note keeps the syntax it was written with.
+ */
+export function editedNoteHeader(
+  startLineText: string,
+  bodyEndLineText: string,
+  note: Pick<Note, 'style' | 'indent'>,
+  content: { body: string; color: NoteColor },
+): string[] {
+  const body = bodyLines(content.body);
+  const start = withColor(startLineText, content.color);
+  if (note.style === 'line') {
+    const token = startLineText.trim().split('@note-start')[0].trim();
+    return [start, ...body.map((l) => `${note.indent}${token} ${l}`), bodyEndLineText];
+  }
+  const close = bodyEndLineText.split('@note-body-end')[1]?.trim() ?? '';
+  return [start, ...body.map((l) => `${note.indent}${close ? safeInBlock(l, close) : l}`), bodyEndLineText];
 }
 
 /**

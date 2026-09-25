@@ -15,6 +15,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const decorations = new DecorationManager(store);
   const preview = new NotePreview(store);
   const tree = new NotesTreeProvider(store);
+  const gutter = new GutterNotes(store);
   const all: vscode.DocumentSelector = { pattern: '**' };
 
   context.subscriptions.push(
@@ -23,9 +24,9 @@ export function activate(context: vscode.ExtensionContext): void {
     decorations,
     preview,
     tree,
-    new GutterNotes(store),
+    gutter,
     registerCommentSyntaxInvalidation(),
-    ...registerCommands(store, preview, folds),
+    ...registerCommands(store, preview, (doc, note) => gutter.edit(doc, note)),
     new NoteHoverProvider(store, (doc, line) => decorations.revealAt(doc, line)),
     vscode.languages.registerCodeActionsProvider(all, new DuplicateIdFixProvider(), {
       providedCodeActionKinds: DuplicateIdFixProvider.kinds,

@@ -12,6 +12,8 @@ import {
   codeStart,
   CommentSyntax,
   detectEol,
+  editedNoteHeader,
+  withColor,
   generateId,
   noteAtLine,
   parseNotes,
@@ -450,5 +452,34 @@ describe('markerLooks', () => {
     expect(look(0, 'fold', false)).toEqual({ 1: 'dim', 3: 'dim', 5: 'dim' });
     expect(look(0, 'dim', false)).toEqual({ 1: 'faint', 3: 'faint', 5: 'faint' });
     expect(look(0, 'off', true)).toEqual({});
+  });
+});
+
+describe('editing an existing note', () => {
+  it('withColor sets, replaces or removes color=', () => {
+    expect(withColor('  # @note-start id=abc', 'red')).toBe('  # @note-start id=abc color=red');
+    expect(withColor('# @note-start', 'green')).toBe('# @note-start color=green');
+    expect(withColor('# @note-start id=a color=green', 'purple')).toBe('# @note-start id=a color=purple');
+    expect(withColor('# @note-start id=a color=green', 'blue')).toBe('# @note-start id=a');
+  });
+
+  it('rewrites body and colour of a line-comment note, keeping its token and markers', () => {
+    const text = src('int f() {', '  //@note-start id=abc', '  // vieja', '  //  @note-body-end', '  return 1;', '  // @note-end', '}');
+    const n = parseNotes(text, C).notes[0];
+    const lines = text.split('\n');
+    const header = editedNoteHeader(lines[n.startLine], lines[n.bodyEndLine], n, { body: '## Nueva  \n\n- uno', color: 'yellow' });
+    expect(header).toEqual(['  //@note-start id=abc color=yellow', '  // ## Nueva\\', '  // ', '  // - uno', '  //  @note-body-end']);
+    const edited = [...lines.slice(0, n.startLine), ...header, ...lines.slice(n.bodyEndLine + 1)].join('\n');
+    expect(parseNotes(edited, C).notes[0]).toMatchObject({ id: 'abc', color: 'yellow', body: '## Nueva\\\n\n- uno', endLine: 7 });
+  });
+
+  it('rewrites a block-comment note and neutralises the closing token', () => {
+    const text = src('/* @note-start id=css color=red', 'vieja', '@note-body-end */', 'a { }', '/* @note-end */');
+    const n = parseNotes(text, CSS).notes[0];
+    const lines = text.split('\n');
+    const header = editedNoteHeader(lines[0], lines[2], n, { body: 'nueva */ línea', color: 'blue' });
+    expect(header).toEqual(['/* @note-start id=css', 'nueva * / línea', '@note-body-end */']);
+    const edited = [...header, ...lines.slice(3)].join('\n');
+    expect(parseNotes(edited, CSS).notes[0]).toMatchObject({ color: 'blue', body: 'nueva * / línea' });
   });
 });

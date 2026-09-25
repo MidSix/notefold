@@ -3,7 +3,6 @@ import { getCommentSyntax } from './commentSyntax';
 import { buildNoteBlock, codeStart, generateId, Note, noteAtLine, NoteContent, withId } from './parser';
 import { NoteStore } from './store';
 import { NotePreview } from './preview';
-import { FoldController } from './folding';
 
 /** Arguments passed by hover links and tree items. */
 export interface NoteRef {
@@ -100,7 +99,11 @@ export function revealLine(editor: vscode.TextEditor, line: number): void {
   editor.revealRange(new vscode.Range(pos, pos), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
 }
 
-export function registerCommands(store: NoteStore, preview: NotePreview, folds: FoldController): vscode.Disposable[] {
+export function registerCommands(
+  store: NoteStore,
+  preview: NotePreview,
+  openEditForm: (doc: vscode.TextDocument, note: Note) => vscode.Comment,
+): vscode.Disposable[] {
   const add = async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) return;
@@ -113,19 +116,10 @@ export function registerCommands(store: NoteStore, preview: NotePreview, folds: 
   const edit = async (ref?: NoteRef) => {
     const target = await resolveNote(store, ref);
     if (!target) return;
-    const { note } = target;
     const editor = await vscode.window.showTextDocument(target.editor.document, target.editor.viewColumn);
-    const doc = editor.document;
-    await folds.unfold(editor, note);
-    if (note.bodyEndLine === note.startLine + 1) {
-      // Empty body: add a line to type into.
-      const bodyLine = note.style === 'line' ? `${note.indent}${commentPrefix(doc.lineAt(note.startLine).text)} ` : note.indent;
-      await editor.edit((b) => b.insert(new vscode.Position(note.bodyEndLine, 0), bodyLine + eolOf(doc)));
-    }
-    const line = note.startLine + 1;
-    const end = doc.lineAt(line).range.end;
-    editor.selection = new vscode.Selection(end, end);
-    editor.revealRange(new vscode.Range(note.startLine, 0, line, 0), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+    editor.revealRange(new vscode.Range(target.note.startLine, 0, codeStart(target.note), 0), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+    // Returned for the integration tests.
+    return openEditForm(editor.document, target.note);
   };
 
   const del = async (ref?: NoteRef) => {
@@ -209,11 +203,6 @@ export function registerCommands(store: NoteStore, preview: NotePreview, folds: 
     vscode.commands.registerCommand('notefold.open', open),
     vscode.commands.registerCommand('notefold.regenerateId', regenerateId),
   ];
-}
-
-/** Comment prefix as written on a `@note-start` line (e.g. "#", "//"). */
-function commentPrefix(startLineText: string): string {
-  return startLineText.trim().split('@note-start')[0].trim();
 }
 
 /** Quick fix for duplicate ids. */
